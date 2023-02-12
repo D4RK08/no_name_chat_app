@@ -1,0 +1,35 @@
+ <?php
+// Connessione al database
+include 'conn.php';
+
+// Avvio la sessione
+session_start();
+
+// Verifico se la sessione è attiva
+if(isset($_SESSION['logged_in']) && $_SESSION['logged_in'] == true){
+    // codice per l'area protetta
+    $id_utente = $_SESSION['id_utente'];
+    $query = "SELECT foto FROM utenti WHERE id = $id_utente";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_array($result);
+    $foto = $row['foto'];
+    $foto_base64 = base64_encode($foto);
+} else {
+    echo "non sei degno di entrare";
+    exit;
+}
+
+// Chiudo la connessione al database
+mysqli_close($conn);
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Area protetta</title>
+</head>
+<body>
+    <img src="data:image/jpeg;base64, <?php echo $foto_base64; ?>"/>
+</body>
+</html>
+
